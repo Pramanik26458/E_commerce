@@ -1,1 +1,19 @@
 @import "tailwindcss";
+* {
+  transition: all 0.25s ease;
+}
+
+/* Premium glow effect */
+.glow:hover {
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+}
+
+/* Card hover lift */
+.card-hover:hover {
+  transform: translateY(-6px) scale(1.02);
+}
+
+/* Button press effect */
+.btn-press:active {
+  transform: scale(0.95);
+}

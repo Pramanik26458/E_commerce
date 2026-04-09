@@ -1,4 +1,3 @@
-// src/pages/AllProduct.jsx
 import { useState, useMemo, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { PRODUCTS, useCart, useWishlist, inr, pctOff } from "../store";

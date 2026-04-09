@@ -2,13 +2,18 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useCart, useWishlist, inr } from "../store";
+import { useAuth } from "../AuthStore";
+import { useCountdownTimer } from "../adminStore"; // ✅ FIXED IMPORT
 
 const LINKS = [
-  { label: "Home",     to: "/" },
+  { label: "Home", to: "/" },
   { label: "Shop All", to: "/allproduct" },
-  { label: "Men",      to: "/men" },
-  { label: "Women",    to: "/women" },
-  { label: "About",    to: "/about" },
+  { label: "Men", to: "/men" },
+  { label: "Women", to: "/women" },
+  { label: "About", to: "/about" },
+  { label: "Orders", to: "/orders" },
+  { label: "Login", to: "/login" },
+  { label: "Admin", to: "/admin/login" },
 ];
 
 export default function Navbar() {
@@ -16,12 +21,17 @@ export default function Navbar() {
   const navigate = useNavigate();
   const { items, removeFromCart, updateQty, cartCount, cartTotal } = useCart();
   const { count: wishCount } = useWishlist();
+  const { user, logout, isLoggedIn } = useAuth();
 
-  const [scrolled,    setScrolled]    = useState(false);
-  const [mobileOpen,  setMobileOpen]  = useState(false);
-  const [cartOpen,    setCartOpen]    = useState(false);
-  const [searchOpen,  setSearchOpen]  = useState(false);
-  const [query,       setQuery]       = useState("");
+  // COUNTDOWN
+  const { h, m, s, isExpired, endTimestamp } = useCountdownTimer();
+  const showBanner = !!endTimestamp && !isExpired;
+
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [query, setQuery] = useState("");
   const searchRef = useRef(null);
 
   useEffect(() => {
@@ -31,14 +41,15 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    setMobileOpen(false); setCartOpen(false); setSearchOpen(false);
+    setMobileOpen(false);
+    setCartOpen(false);
+    setSearchOpen(false);
   }, [pathname]);
 
   useEffect(() => {
     if (searchOpen) setTimeout(() => searchRef.current?.focus(), 80);
   }, [searchOpen]);
 
-  // Lock body scroll when cart/mobile open
   useEffect(() => {
     document.body.style.overflow = cartOpen || mobileOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
@@ -46,26 +57,47 @@ export default function Navbar() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (query.trim()) { navigate(`/allproduct?q=${encodeURIComponent(query.trim())}`); setSearchOpen(false); setQuery(""); }
+    if (query.trim()) {
+      navigate(`/allproduct?q=${encodeURIComponent(query.trim())}`);
+      setSearchOpen(false);
+      setQuery("");
+    }
   };
 
   return (
     <>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap'); .font-serif{font-family:'Playfair Display',Georgia,serif!important}`}</style>
 
-      {/* ─── NAV BAR ─── */}
-      <header className={`fixed top-0 inset-x-0 z-40 transition-all duration-500 ${
-        scrolled ? "bg-[#080808]/97 backdrop-blur-2xl border-b border-white/[0.07] py-3 shadow-[0_4px_30px_rgba(0,0,0,0.7)]" : "bg-transparent py-5"
-      }`}>
+      {/*  COUNTDOWN */}
+      {showBanner && !scrolled && (
+        <div className="fixed top-0 inset-x-0 z-50 bg-amber-400 text-black text-xs font-bold flex justify-center items-center py-2 gap-2 tracking-wide transition-all duration-500">
+          🔥 FLASH SALE — Ends in
+          <span className="bg-black text-amber-400 px-3 py-1 rounded-md font-black tracking-widest">
+            {h}:{m}:{s}
+          </span>
+        </div>
+      )}
+
+      {/* NAVBAR yanha se */}
+      <header
+        className={`fixed inset-x-0 z-40 transition-all duration-500 ${
+          showBanner && !scrolled ? "top-[40px]" : "top-0"
+        } ${
+          scrolled
+            ? "bg-[#080808]/97 backdrop-blur-2xl border-b border-white/[0.07] py-3 shadow-[0_4px_30px_rgba(0,0,0,0.7)]"
+            : "bg-transparent py-5"
+        }`}
+      >
+      
         <div className="max-w-7xl mx-auto px-5 flex items-center justify-between">
-          {/* Logo */}
+         
           <Link to="/" className="shrink-0 leading-none">
             <span className="text-[1.7rem] font-black tracking-tight text-white font-serif">
               PR<span className="text-amber-400">.</span>
             </span>
           </Link>
 
-          {/* Desktop Nav */}
+      
           <nav className="hidden md:flex items-center gap-8">
             {LINKS.map(({ label, to }) => (
               <Link key={label} to={to} className={`text-sm font-medium tracking-wide transition-colors duration-200 ${
@@ -74,7 +106,7 @@ export default function Navbar() {
             ))}
           </nav>
 
-          {/* Icons */}
+        
           <div className="flex items-center gap-3">
             {/* Search */}
             <button onClick={() => setSearchOpen(v => !v)} className="p-1.5 text-white/45 hover:text-white transition-colors" aria-label="Search">

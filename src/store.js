@@ -395,16 +395,16 @@ export function useWishlist() {
 
 // ─── COUPONS ─────────────────────────────────────────────────────────────────
 
-const COUPONS = { PR10: 0.1, SAVE20: 0.2, FIRST15: 0.15, WELCOME: 0.12 };
+// const COUPONS = { PR10: 0.1, SAVE20: 0.2, FIRST15: 0.15, WELCOME: 0.12 };
 
-export function applyCoupon(code, total) {
-  const rate = COUPONS[code.trim().toUpperCase()];
-  if (!rate)
-    return { valid: false, discount: 0, message: "Invalid coupon code." };
-  return {
-    valid: true,
-    discount: Math.round(total * rate),
-    rate,
-    message: `${Math.round(rate * 100)}% off applied! 🎉`,
-  };
-}
+// export function applyCoupon(code, total) {
+//   const rate = COUPONS[code.trim().toUpperCase()];
+//   if (!rate)
+//     return { valid: false, discount: 0, message: "Invalid coupon code." };
+//   return {
+//     valid: true,
+//     discount: Math.round(total * rate),
+//     rate,
+//     message: `${Math.round(rate * 100)}% off applied! 🎉`,
+//   };
+// }

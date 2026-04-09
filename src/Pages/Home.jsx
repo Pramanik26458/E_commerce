@@ -1,6 +1,6 @@
 // src/pages/Home.jsx
-
 import { useState, useEffect } from "react";
+import { useCountdownTimer } from "../adminStore";
 import { Link, useNavigate } from "react-router-dom";
 import { PRODUCTS, useCart, useWishlist, inr, pctOff } from "../store";
 
@@ -15,18 +15,7 @@ const FontStyle = () => (
   `}</style>
 );
 
-function useCountdown(init = 8 * 3600 + 47 * 60 + 23) {
-  const [s, setS] = useState(init);
-  useEffect(() => {
-    const t = setInterval(() => setS((v) => Math.max(0, v - 1)), 1000);
-    return () => clearInterval(t);
-  }, []);
-  return {
-    h: String(Math.floor(s / 3600)).padStart(2, "0"),
-    m: String(Math.floor((s % 3600) / 60)).padStart(2, "0"),
-    s: String(s % 60).padStart(2, "0"),
-  };
-}
+
 
 const StarRow = ({ n = 5, size = "text-sm" }) => (
   <span className={`text-amber-400 ${size}`}>{"★".repeat(Math.round(n))}</span>
@@ -47,21 +36,17 @@ const BadgePill = ({ label }) => {
 };
 
 function UrgencyStrip() {
-  const { h, m, s } = useCountdown();
+  const { h, m, s, isExpired, endTimestamp } = useCountdownTimer();
+
+  if (!endTimestamp || isExpired) return null;
+
   return (
-    <div className="bg-gradient-to-r from-amber-600 via-amber-400 to-amber-600 py-2.5 px-4">
-      <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-3 text-black text-xs font-black tracking-wide">
-        <span>🔥 FLASH SALE — Up to 60% OFF</span>
-        <span className="opacity-40 hidden sm:inline">|</span>
-        <span className="flex items-center gap-2">
-          Ends in:
-          <span className="bg-black text-amber-400 font-black px-3 py-0.5 rounded-lg tabular-nums text-sm tracking-widest">
-            {h}:{m}:{s}
-          </span>
-        </span>
-        <span className="opacity-40 hidden sm:inline">|</span>
-        <span>🚀 Free shipping over ₹999</span>
-      </div>
+    <div className="w-full bg-amber-400 text-black text-xs font-bold flex items-center justify-center gap-2 py-2 tracking-wide">
+      🔥 FLASH SALE — Up to 60% OFF | Ends in:
+
+      <span className="bg-black/80 backdrop-blur-md text-amber-400 font-black px-3 py-1 rounded-lg tracking-widest border border-amber-400/20">
+        {h}:{m}:{s}
+      </span>
     </div>
   );
 }
@@ -252,36 +237,62 @@ function ProductCard({ product }) {
   return (
     <div
       onClick={() => navigate(`/product/${product.id}`)}
-      className="group bg-[#111] rounded-2xl overflow-hidden border border-white/[0.06] hover:border-amber-400/20 cursor-pointer transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_70px_rgba(0,0,0,0.7)]"
+      className="product-card group"
     >
+      {/* Image */}
       <div className="relative overflow-hidden aspect-[4/5]">
-        <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
+        <img
+          src={product.images[0]}
+          alt={product.name}
+          className="card-img w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+        {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-1.5">
           <BadgePill label={product.badge} />
-          <span className="bg-black/65 text-white text-[9px] font-black px-2 py-0.5 rounded-full self-start">−{pctOff(product.original, product.price)}%</span>
+          <span className="bg-black/70 text-white text-[9px] font-black px-2.5 py-0.5 rounded-full self-start backdrop-blur-sm">
+            −{pctOff(product.original, product.price)}%
+          </span>
         </div>
-        <button onClick={(e) => { e.stopPropagation(); toggle(product.id); }} className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/60 flex items-center justify-center text-sm hover:scale-110 transition-transform">
+
+        {/* Wishlist */}
+        <button
+          onClick={(e) => { e.stopPropagation(); toggle(product.id); }}
+          className="absolute top-3 right-3 w-9 h-9 rounded-full bg-black/55 backdrop-blur-sm flex items-center justify-center text-base icon-hover border border-white/[0.08] hover:border-rose-400/30 transition-colors"
+        >
           {isWished(product.id) ? "❤️" : "🤍"}
         </button>
+
+        {/* Low stock */}
         {product.stock <= 5 && (
-          <div className="absolute bottom-3 left-3 right-3 bg-rose-600/90 text-white text-[10px] font-bold px-2 py-1.5 rounded-lg text-center">⚡ Only {product.stock} left — hurry!</div>
+          <div className="absolute bottom-3 left-3 right-3 bg-rose-600/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1.5 rounded-lg text-center border border-rose-500/30">
+            ⚡ Only {product.stock} left — hurry!
+          </div>
         )}
       </div>
+
+      {/* Info */}
       <div className="p-4 space-y-2">
-        <p className="text-white/25 text-[9px] tracking-widest uppercase">{product.category}</p>
-        <h3 className="text-white font-bold text-sm leading-snug group-hover:text-amber-300 transition-colors">{product.name}</h3>
+        <p className="text-white/22 text-[9px] tracking-widest uppercase font-semibold">{product.category}</p>
+        <h3 className="text-white font-bold text-sm leading-snug group-hover:text-amber-300 transition-colors duration-300">
+          {product.name}
+        </h3>
         <div className="flex items-center gap-1.5">
           <StarRow n={product.rating} size="text-xs" />
-          <span className="text-white/25 text-[10px]">({product.reviews.toLocaleString()})</span>
+          <span className="text-white/22 text-[10px]">({product.reviews.toLocaleString()})</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-amber-400 font-black text-base">{inr(product.price)}</span>
-          <span className="text-white/25 line-through text-xs">{inr(product.original)}</span>
+          <span className="text-white/22 line-through text-xs">{inr(product.original)}</span>
         </div>
         <button
           onClick={handleAdd}
-          className={`w-full py-2.5 rounded-xl font-bold text-xs tracking-wide transition-all duration-300 ${added ? "bg-emerald-500 text-white" : "bg-white/90 text-black hover:bg-amber-400 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(251,191,36,0.3)]"}`}
+          className={`atc-btn w-full py-2.5 rounded-xl font-bold text-xs tracking-wide ${
+            added
+              ? "added"
+              : "bg-white/88 text-black"
+          }`}
         >
           {added ? "✓ Added to Cart!" : "Add to Cart"}
         </button>
@@ -524,7 +535,6 @@ export default function Home() {
   return (
     <div className="bg-[#080808]">
       <FontStyle />
-      <UrgencyStrip />
       <Hero />
       <TrustBar />
       <CategoryGrid />
@@ -537,4 +547,5 @@ export default function Home() {
       <StickyBubble />
     </div>
   );
+
 }

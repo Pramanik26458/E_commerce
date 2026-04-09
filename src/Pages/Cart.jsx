@@ -1,8 +1,9 @@
 // src/pages/Cart.jsx
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useCart, applyCoupon, inr } from "../store";
+import { useCart, inr } from "../store";
 import { useAuth, useOrders } from "../AuthStore";
+import { validateCoupon } from "../adminStore";
 
 export default function Cart() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ export default function Cart() {
   const shipping   = cartTotal - discount >= 999 ? 0 : 99;
   const finalTotal = cartTotal - discount + shipping;
 
-  const handleCoupon = () => setCouponRes(applyCoupon(coupon, cartTotal));
+  const handleCoupon = () => setCouponRes(validateCoupon(coupon, cartTotal));
   const handleOrder  = () => { setOrdered(true); clearCart(); };
 
   if (ordered) return (
@@ -95,7 +96,7 @@ export default function Cart() {
                   <button onClick={handleCoupon} className="bg-amber-400 hover:bg-amber-300 text-black font-bold text-xs px-4 rounded-xl transition-colors">Apply</button>
                 </div>
                 {couponRes&&<p className={`text-xs mt-2 font-semibold ${couponRes.valid?"text-emerald-400":"text-rose-400"}`}>{couponRes.valid?"✓":"✗"} {couponRes.message}</p>}
-                <p className="text-white/15 text-[10px] mt-2">Try: PR10 · SAVE20 · FIRST15 · WELCOME</p>
+                <p className="text-white/15 text-[10px] mt-2">Try: PR10 · SAVE20 · FIRST15 · FLAT100</p>
               </div>
 
               {/* Order Summary */}
