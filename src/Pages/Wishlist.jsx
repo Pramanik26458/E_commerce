@@ -1,4 +1,3 @@
-// src/pages/Wishlist.jsx
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { PRODUCTS, useCart, useWishlist, inr, pctOff } from "../store";

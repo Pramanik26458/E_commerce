@@ -1,8 +1,3 @@
-// src/pages/OrderHistory.jsx
-// ─────────────────────────────────────────────────────────────────────────────
-// Paste at: src/pages/OrderHistory.jsx   (NEW FILE — add route in App.jsx)
-// ─────────────────────────────────────────────────────────────────────────────
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth, useOrders } from "../AuthStore";

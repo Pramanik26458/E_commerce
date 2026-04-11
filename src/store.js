@@ -1,4 +1,4 @@
-// src/store.js
+
 // Global state: PRODUCTS catalogue, useCart hook, useWishlist hook, coupons
 // All state persisted via localStorage and synced across tabs
 

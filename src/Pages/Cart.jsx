@@ -1,4 +1,3 @@
-// src/pages/Cart.jsx
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart, inr } from "../store";

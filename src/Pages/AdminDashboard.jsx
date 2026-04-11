@@ -67,7 +67,7 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#080808] via-black to-[#0a0a0a] text-white">
 
-      {/* 🔥 TOP BAR */}
+      {/*TOP BAR */}
       <div className="sticky top-0 z-50 bg-black/60 backdrop-blur-xl border-b border-white/10 px-6 py-4 flex justify-between items-center">
         <div>
           <h1 className="text-xl font-black tracking-wide">PR Admin</h1>

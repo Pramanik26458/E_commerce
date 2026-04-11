@@ -1,4 +1,3 @@
-// src/pages/Women.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PRODUCTS, useCart, useWishlist, inr, pctOff } from "../store";

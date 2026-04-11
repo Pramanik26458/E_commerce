@@ -1,7 +1,7 @@
-// src/adminStore.js
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Admin authentication, countdown timer management, and coupon management
-// All data stored in localStorage — no backend required
+// All data stored in localStorage — no backend needed for project
 //
 // HOW IT WORKS:
 //   - Admin credentials are hardcoded (can be changed below)

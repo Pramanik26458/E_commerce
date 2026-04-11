@@ -1,7 +1,3 @@
-// src/pages/Signup.jsx
-// ─────────────────────────────────────────────────────────────────────────────
-// Paste at: src/pages/Signup.jsx   (NEW FILE — add route in App.jsx)
-// ─────────────────────────────────────────────────────────────────────────────
 
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";

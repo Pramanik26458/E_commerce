@@ -1,4 +1,3 @@
-// src/pages/Home.jsx
 import { useState, useEffect } from "react";
 import { useCountdownTimer } from "../adminStore";
 import { Link, useNavigate } from "react-router-dom";

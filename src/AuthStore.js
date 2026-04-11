@@ -1,10 +1,3 @@
-// src/authStore.js
-// ─────────────────────────────────────────────────────────────────────────────
-// Paste at: src/authStore.js
-// Handles: user signup, login, logout, order history — all via localStorage
-// Import useAuth, useOrders from this file in any component
-// ─────────────────────────────────────────────────────────────────────────────
-
 import { useState, useEffect, useCallback } from "react";
 
 const USERS_KEY  = "pr_users";
